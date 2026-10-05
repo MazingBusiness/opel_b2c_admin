@@ -1,0 +1,42 @@
+/*
+  OPEL product color palette (Pantone guidelines).
+
+  Proportions (product / UI guidance):
+  - Main body (teal)     ~60–70%
+  - Secondary (black)    ~25–30%
+  - Highlights (gold)    ~10–15%
+
+  Tailwind v4: tokens via @theme — no tailwind.config.js.
+*/
+
+@theme {
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+
+  /* Main body — Pantone 7712 / CMYK 100 20 30 0 */
+  --color-brand: #00859b;
+  --color-brand-dark: #006f82;
+  --color-brand-light: #00a3bd;
+
+  /* Secondary — Pantone Black / CMYK 0 0 0 100 */
+  --color-secondary: #000000;
+
+  /* Highlights — Pantone 7752 / CMYK 20 30 70 0 */
+  --color-highlight: #ccb34d;
+  --color-highlight-dark: #b89c3a;
+
+  /* Semantic aliases for UI patterns */
+  --color-cta: var(--color-highlight);
+  --color-cta-foreground: #000000;
+  --color-ink: #000000;
+  --color-ink-muted: #4b5563;
+  --color-ink-inverse: #ffffff;
+
+  /* Marketplace surfaces (not brand inks — keep product cards readable) */
+  --color-surface: #ffffff;
+  --color-surface-muted: #f3f4f6;
+  --color-surface-inverse: #000000;
+  --color-border: #e5e7eb;
+
+  /* Functional (non-brand) — ratings / discount copy */
+  --color-success: #1f7a3a;
+}
