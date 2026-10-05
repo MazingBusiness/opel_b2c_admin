@@ -7,6 +7,8 @@ import { AuthSessionBootstrap } from '../features/auth/components/AuthSessionBoo
 import { useAuthStore } from '../features/auth/store/useAuthStore'
 import { DashboardPage } from '../features/dashboard/pages/DashboardPage'
 import { ProfilePage } from '../features/profile/pages/ProfilePage'
+import { UsersListPage } from '../features/users/pages/UsersListPage'
+import { UserDetailPage } from '../features/users/pages/UserDetailPage'
 
 function ProtectedRoute() {
   const token = useAuthStore((s) => s.token)
@@ -64,6 +66,8 @@ export function App() {
         <Route element={<ProtectedRoute />}>
           <Route element={<AdminLayout />}>
             <Route path="/" element={<DashboardPage />} />
+            <Route path="/users" element={<UsersListPage />} />
+            <Route path="/users/:id" element={<UserDetailPage />} />
             <Route path="/profile" element={<ProfilePage />} />
           </Route>
         </Route>

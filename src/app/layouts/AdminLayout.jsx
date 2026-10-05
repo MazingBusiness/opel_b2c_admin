@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { HiOutlineHome, HiOutlineLogout, HiOutlineUserCircle } from 'react-icons/hi'
+import { HiOutlineHome, HiOutlineLogout, HiOutlineUserCircle, HiOutlineUsers } from 'react-icons/hi'
 import { useAuthStore } from '../../features/auth/store/useAuthStore'
 import { logoutRequest } from '../../features/auth/api/api'
 import opelLogo from '../../assets/images/opelLogo.jpg'
@@ -72,6 +72,10 @@ export function AdminLayout() {
             <NavLink to="/" end className={navLinkClass}>
               <HiOutlineHome className="h-4 w-4" aria-hidden />
               Dashboard
+            </NavLink>
+            <NavLink to="/users" className={navLinkClass}>
+              <HiOutlineUsers className="h-4 w-4" aria-hidden />
+              Users
             </NavLink>
             <NavLink to="/profile" className={navLinkClass}>
               <HiOutlineUserCircle className="h-4 w-4" aria-hidden />
