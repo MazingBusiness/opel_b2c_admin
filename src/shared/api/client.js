@@ -1,8 +1,15 @@
 import axios from 'axios'
 import { useAuthStore } from '../../features/auth/store/useAuthStore'
 
-/** Public auth routes that must not send a stale Bearer token. */
-const PUBLIC_AUTH_PATH_FRAGMENTS = ['/api/v1/admin/auth/login']
+/**
+ * Public auth routes: never send a stale Bearer token, and a 401 from them
+ * must not clear the local session.
+ */
+const PUBLIC_AUTH_PATH_FRAGMENTS = [
+  '/api/v1/admin/auth/login',
+  '/api/v1/admin/auth/forgot-password',
+  '/api/v1/admin/auth/reset-password',
+]
 
 /**
  * @param {string | undefined} url
@@ -66,4 +73,25 @@ export function getErrorMessage(error, fallback = 'Something went wrong. Please 
   }
 
   return fallback
+}
+
+/**
+ * Laravel 422 field errors as `{ field: firstMessage }`.
+ * @param {unknown} error
+ * @returns {Record<string, string>}
+ */
+export function getFieldErrors(error) {
+  if (!error || typeof error !== 'object') return {}
+  const data = /** @type {{ response?: { data?: Record<string, unknown> } }} */ (error).response
+    ?.data
+  const errors = data?.errors
+  if (!errors || typeof errors !== 'object') return {}
+
+  /** @type {Record<string, string>} */
+  const out = {}
+  for (const [field, value] of Object.entries(/** @type {Record<string, unknown>} */ (errors))) {
+    if (Array.isArray(value) && typeof value[0] === 'string') out[field] = value[0]
+    else if (typeof value === 'string') out[field] = value
+  }
+  return out
 }

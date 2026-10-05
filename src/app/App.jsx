@@ -1,9 +1,12 @@
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom'
 import { AdminLayout } from './layouts/AdminLayout'
 import { LoginPage } from '../features/auth/pages/LoginPage'
+import { ForgotPasswordPage } from '../features/auth/pages/ForgotPasswordPage'
+import { ResetPasswordPage } from '../features/auth/pages/ResetPasswordPage'
 import { AuthSessionBootstrap } from '../features/auth/components/AuthSessionBootstrap'
 import { useAuthStore } from '../features/auth/store/useAuthStore'
 import { DashboardPage } from '../features/dashboard/pages/DashboardPage'
+import { ProfilePage } from '../features/profile/pages/ProfilePage'
 
 function ProtectedRoute() {
   const token = useAuthStore((s) => s.token)
@@ -52,11 +55,16 @@ export function App() {
       <Routes>
         <Route element={<PublicOnlyRoute />}>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         </Route>
+
+        {/* Reachable even with a session: emailed links may be opened in a signed-in browser. */}
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
 
         <Route element={<ProtectedRoute />}>
           <Route element={<AdminLayout />}>
             <Route path="/" element={<DashboardPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
           </Route>
         </Route>
 

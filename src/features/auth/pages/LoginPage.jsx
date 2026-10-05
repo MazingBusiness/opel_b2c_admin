@@ -1,15 +1,22 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore, toAdminUser } from '../store/useAuthStore'
 import { loginRequest } from '../api/api'
 import { getErrorMessage } from '../../../shared/api/client'
 import { Button } from '../../../shared/components/Button'
-import opelLogo from '../../../assets/images/opelLogo.jpg'
+import { TextField } from '../../../shared/components/TextField'
+import { Alert } from '../../../shared/components/Alert'
+import { AuthCard } from '../components/AuthCard'
 
 export function LoginPage() {
   const setSession = useAuthStore((s) => s.setSession)
   const navigate = useNavigate()
-  const [email, setEmail] = useState('')
+  const location = useLocation()
+  const flashMessage =
+    typeof location.state?.message === 'string' ? location.state.message : ''
+  const [email, setEmail] = useState(
+    typeof location.state?.email === 'string' ? location.state.email : '',
+  )
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -34,64 +41,54 @@ export function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-surface-muted px-4 py-10">
-      <div className="w-full max-w-sm rounded-lg border border-border bg-surface p-8 shadow-sm">
-        <div className="flex flex-col items-center text-center">
-          <img
-            src={opelLogo}
-            alt="OPEL Tools"
-            className="h-10 w-auto object-contain sm:h-11"
+    <AuthCard subtitle="Sign in with your staff email and password.">
+      {flashMessage ? (
+        <Alert tone="success" className="mt-6">
+          {flashMessage}
+        </Alert>
+      ) : null}
+
+      <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+        <TextField
+          id="email"
+          label="Email"
+          type="email"
+          autoComplete="username"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+
+        <div>
+          <TextField
+            id="password"
+            label="Password"
+            type="password"
+            autoComplete="current-password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
-          <h1 className="mt-4 text-xl font-semibold text-ink">B2C Admin</h1>
-          <p className="mt-1 text-sm text-ink-muted">
-            Sign in with your staff email and password.
-          </p>
+          <div className="mt-1.5 text-right">
+            <Link
+              to="/forgot-password"
+              className="text-xs font-medium text-brand hover:text-brand-dark hover:underline"
+            >
+              Forgot password?
+            </Link>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-ink">
-              Email
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="username"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 w-full rounded-md border border-border bg-surface px-3 py-2.5 text-sm text-ink outline-none focus:border-brand focus:ring-1 focus:ring-brand"
-            />
-          </div>
+        {error ? (
+          <p className="text-sm text-red-600" role="alert">
+            {error}
+          </p>
+        ) : null}
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-ink">
-              Password
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 w-full rounded-md border border-border bg-surface px-3 py-2.5 text-sm text-ink outline-none focus:border-brand focus:ring-1 focus:ring-brand"
-            />
-          </div>
-
-          {error ? (
-            <p className="text-sm text-red-600" role="alert">
-              {error}
-            </p>
-          ) : null}
-
-          <Button type="submit" className="w-full" disabled={submitting}>
-            {submitting ? 'Signing in…' : 'Sign in'}
-          </Button>
-        </form>
-      </div>
-    </div>
+        <Button type="submit" className="w-full" disabled={submitting}>
+          {submitting ? 'Signing in…' : 'Sign in'}
+        </Button>
+      </form>
+    </AuthCard>
   )
 }

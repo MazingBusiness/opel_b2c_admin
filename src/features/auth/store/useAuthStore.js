@@ -53,6 +53,12 @@ export const useAuthStore = create(
           bootstrapped: true,
         }),
 
+      /**
+       * Replace the signed-in user (e.g. after a profile update); token unchanged.
+       * @param {AdminUser | null} user
+       */
+      setUser: (user) => set({ user }),
+
       markBootstrapped: () => set({ bootstrapped: true }),
     }),
     {

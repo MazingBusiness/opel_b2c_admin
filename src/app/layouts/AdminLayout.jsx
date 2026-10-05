@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { HiOutlineHome, HiOutlineLogout } from 'react-icons/hi'
+import { HiOutlineHome, HiOutlineLogout, HiOutlineUserCircle } from 'react-icons/hi'
 import { useAuthStore } from '../../features/auth/store/useAuthStore'
 import { logoutRequest } from '../../features/auth/api/api'
 import opelLogo from '../../assets/images/opelLogo.jpg'
@@ -41,9 +41,18 @@ export function AdminLayout() {
 
           <div className="flex items-center gap-3">
             {user?.email ? (
-              <p className="hidden max-w-48 truncate text-xs text-ink-muted sm:block">
+              <NavLink
+                to="/profile"
+                title="Your profile"
+                className={({ isActive }) =>
+                  [
+                    'hidden max-w-48 truncate text-xs transition-colors hover:text-brand hover:underline sm:block',
+                    isActive ? 'text-brand' : 'text-ink-muted',
+                  ].join(' ')
+                }
+              >
                 {user.email}
-              </p>
+              </NavLink>
             ) : null}
             <button
               type="button"
@@ -63,6 +72,10 @@ export function AdminLayout() {
             <NavLink to="/" end className={navLinkClass}>
               <HiOutlineHome className="h-4 w-4" aria-hidden />
               Dashboard
+            </NavLink>
+            <NavLink to="/profile" className={navLinkClass}>
+              <HiOutlineUserCircle className="h-4 w-4" aria-hidden />
+              Profile
             </NavLink>
           </nav>
         </aside>
