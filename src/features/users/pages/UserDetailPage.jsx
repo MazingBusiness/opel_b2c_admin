@@ -3,6 +3,9 @@ import { Link, useParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { HiOutlineArrowLeft } from 'react-icons/hi'
 import { activateUser, deactivateUser, fetchUser } from '../api/api'
+import { fetchOrders } from '../../orders/api/api'
+import { FulfilmentBadge, PaymentStatusBadge } from '../../orders/components/OrderBadges'
+import { formatMoney } from '../../orders/utils'
 import { StatusBadge } from '../components/StatusBadge'
 import { formatDate, formatDateTime, formatPhone } from '../utils'
 import { getErrorMessage } from '../../../shared/api/client'
@@ -79,6 +82,12 @@ export function UserDetailPage() {
 
   const user = query.data?.user
   const disabled = user?.status === 'disabled'
+
+  const ordersQuery = useQuery({
+    queryKey: ['admin-orders', { userId: id, recent: true }],
+    queryFn: () => fetchOrders({ user_id: id, per_page: 5, page: 1 }),
+    enabled: Boolean(id) && Boolean(user),
+  })
 
   const mutation = useMutation({
     mutationFn: () => (disabled ? activateUser(id) : deactivateUser(id)),
@@ -195,6 +204,66 @@ export function UserDetailPage() {
                 {user.addresses.map((address) => (
                   <AddressCard key={address.id} address={address} />
                 ))}
+              </div>
+            )}
+          </Section>
+
+
+          <Section
+            title="Orders"
+            description={`${user.orders_count} ${user.orders_count === 1 ? 'order' : 'orders'} total`}
+            action={
+              user.orders_count > 0 ? (
+                <Link
+                  to={`/orders?user_id=${user.id}`}
+                  className="text-sm font-medium text-brand hover:underline"
+                >
+                  View all
+                </Link>
+              ) : null
+            }
+          >
+            {ordersQuery.isPending ? (
+              <p className="text-sm text-ink-muted">Loading recent orders…</p>
+            ) : ordersQuery.isError ? (
+              <Alert tone="error">{getErrorMessage(ordersQuery.error)}</Alert>
+            ) : (ordersQuery.data?.data?.length ?? 0) === 0 ? (
+              <p className="text-sm text-ink-muted">No orders yet.</p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-border text-sm">
+                  <thead className="text-left text-xs font-semibold uppercase tracking-wide text-ink-muted">
+                    <tr>
+                      <th scope="col" className="py-2 pr-4">Order</th>
+                      <th scope="col" className="py-2 pr-4">Status</th>
+                      <th scope="col" className="py-2 pr-4">Payment</th>
+                      <th scope="col" className="py-2 pr-4 text-right">Total</th>
+                      <th scope="col" className="py-2">Placed</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {ordersQuery.data.data.map((order) => (
+                      <tr key={order.number}>
+                        <td className="py-3 pr-4">
+                          <Link
+                            to={`/orders/${order.number}`}
+                            className="font-medium text-brand hover:underline"
+                          >
+                            {order.number}
+                          </Link>
+                        </td>
+                        <td className="py-3 pr-4">
+                          <FulfilmentBadge status={order.status} />
+                        </td>
+                        <td className="py-3 pr-4">
+                          <PaymentStatusBadge status={order.payment_status} />
+                        </td>
+                        <td className="py-3 pr-4 text-right tabular-nums">{formatMoney(order.grand_total)}</td>
+                        <td className="whitespace-nowrap py-3 text-ink-muted">{formatDateTime(order.placed_at)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             )}
           </Section>

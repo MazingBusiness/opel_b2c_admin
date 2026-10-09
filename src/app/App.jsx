@@ -9,6 +9,9 @@ import { DashboardPage } from '../features/dashboard/pages/DashboardPage'
 import { ProfilePage } from '../features/profile/pages/ProfilePage'
 import { UsersListPage } from '../features/users/pages/UsersListPage'
 import { UserDetailPage } from '../features/users/pages/UserDetailPage'
+import { OrdersListPage } from '../features/orders/pages/OrdersListPage'
+import { OrderDetailPage } from '../features/orders/pages/OrderDetailPage'
+import { ScrollToTop } from '../shared/components/ScrollToTop'
 
 function ProtectedRoute() {
   const token = useAuthStore((s) => s.token)
@@ -53,6 +56,7 @@ function PublicOnlyRoute() {
 export function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <AuthSessionBootstrap />
       <Routes>
         <Route element={<PublicOnlyRoute />}>
@@ -68,6 +72,8 @@ export function App() {
             <Route path="/" element={<DashboardPage />} />
             <Route path="/users" element={<UsersListPage />} />
             <Route path="/users/:id" element={<UserDetailPage />} />
+            <Route path="/orders" element={<OrdersListPage />} />
+            <Route path="/orders/:number" element={<OrderDetailPage />} />
             <Route path="/profile" element={<ProfilePage />} />
           </Route>
         </Route>

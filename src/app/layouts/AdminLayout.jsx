@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { HiOutlineHome, HiOutlineLogout, HiOutlineUserCircle, HiOutlineUsers } from 'react-icons/hi'
+import { HiOutlineClipboardList, HiOutlineHome, HiOutlineLogout, HiOutlineUserCircle, HiOutlineUsers } from 'react-icons/hi'
 import { useAuthStore } from '../../features/auth/store/useAuthStore'
 import { logoutRequest } from '../../features/auth/api/api'
 import opelLogo from '../../assets/images/opelLogo.jpg'
@@ -77,6 +77,10 @@ export function AdminLayout() {
               <HiOutlineUsers className="h-4 w-4" aria-hidden />
               Users
             </NavLink>
+            <NavLink to="/orders" className={navLinkClass}>
+              <HiOutlineClipboardList className="h-4 w-4" aria-hidden />
+              Orders
+            </NavLink>
             <NavLink to="/profile" className={navLinkClass}>
               <HiOutlineUserCircle className="h-4 w-4" aria-hidden />
               Profile
@@ -84,7 +88,7 @@ export function AdminLayout() {
           </nav>
         </aside>
 
-        <main className="flex-1 overflow-auto p-4 sm:p-6">
+        <main id="admin-main" className="flex-1 overflow-auto p-4 sm:p-6">
           <Outlet />
         </main>
       </div>
