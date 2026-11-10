@@ -14,6 +14,8 @@ import { OrderDetailPage } from '../features/orders/pages/OrderDetailPage'
 import { ScrollToTop } from '../shared/components/ScrollToTop'
 import { SeoListPage } from '../features/seo/pages/SeoListPage'
 import { SeoEditPage } from '../features/seo/pages/SeoEditPage'
+import { CatalogListPage } from '../features/catalog/pages/CatalogListPage'
+import { CatalogDetailPage } from '../features/catalog/pages/CatalogDetailPage'
 
 function ProtectedRoute() {
   const token = useAuthStore((s) => s.token)
@@ -76,6 +78,8 @@ export function App() {
             <Route path="/users/:id" element={<UserDetailPage />} />
             <Route path="/orders" element={<OrdersListPage />} />
             <Route path="/orders/:number" element={<OrderDetailPage />} />
+            <Route path="/catalog" element={<CatalogListPage />} />
+            <Route path="/catalog/:entity/:id" element={<CatalogDetailPage />} />
             <Route path="/seo" element={<SeoListPage />} />
             <Route path="/seo/:type/:key" element={<SeoEditPage />} />
             <Route path="/profile" element={<ProfilePage />} />
