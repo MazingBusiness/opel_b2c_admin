@@ -16,6 +16,7 @@ import { SeoListPage } from '../features/seo/pages/SeoListPage'
 import { SeoEditPage } from '../features/seo/pages/SeoEditPage'
 import { CatalogListPage } from '../features/catalog/pages/CatalogListPage'
 import { CatalogDetailPage } from '../features/catalog/pages/CatalogDetailPage'
+import { HomeLayoutPage } from '../features/home/pages/HomeLayoutPage'
 
 function ProtectedRoute() {
   const token = useAuthStore((s) => s.token)
@@ -80,6 +81,7 @@ export function App() {
             <Route path="/orders/:number" element={<OrderDetailPage />} />
             <Route path="/catalog" element={<CatalogListPage />} />
             <Route path="/catalog/:entity/:id" element={<CatalogDetailPage />} />
+            <Route path="/homepage" element={<HomeLayoutPage />} />
             <Route path="/seo" element={<SeoListPage />} />
             <Route path="/seo/:type/:key" element={<SeoEditPage />} />
             <Route path="/profile" element={<ProfilePage />} />
