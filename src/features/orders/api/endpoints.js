@@ -10,4 +10,10 @@ export const ADMIN_ORDERS_ENDPOINTS = {
   codCollected: (number) => `/api/v1/admin/orders/${encodeURIComponent(number)}/cod-collected`,
   /** @param {string} number */
   paymentNotes: (number) => `/api/v1/admin/orders/${encodeURIComponent(number)}/payment-notes`,
+  /** @param {string} number */
+  allocation: (number) => `/api/v1/admin/orders/${encodeURIComponent(number)}/allocation`,
+  /** @param {string} number */
+  allocate: (number) => `/api/v1/admin/orders/${encodeURIComponent(number)}/allocate`,
+  /** @param {string} number */
+  cancelUnallocated: (number) => `/api/v1/admin/orders/${encodeURIComponent(number)}/cancel-unallocated`,
 }

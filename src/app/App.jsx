@@ -16,6 +16,12 @@ import { SeoListPage } from '../features/seo/pages/SeoListPage'
 import { SeoEditPage } from '../features/seo/pages/SeoEditPage'
 import { CatalogListPage } from '../features/catalog/pages/CatalogListPage'
 import { CatalogDetailPage } from '../features/catalog/pages/CatalogDetailPage'
+import { SubOrdersListPage } from '../features/fulfilment/pages/SubOrdersListPage'
+import { SubOrderDetailPage } from '../features/fulfilment/pages/SubOrderDetailPage'
+import { ChallansPage } from '../features/fulfilment/pages/ChallansPage'
+import { ChallanDetailPage } from '../features/fulfilment/pages/ChallanDetailPage'
+import { InvoicesPage } from '../features/fulfilment/pages/InvoicesPage'
+import { InvoiceDetailPage } from '../features/fulfilment/pages/InvoiceDetailPage'
 import { HomeLayoutPage } from '../features/home/pages/HomeLayoutPage'
 
 function ProtectedRoute() {
@@ -79,6 +85,12 @@ export function App() {
             <Route path="/users/:id" element={<UserDetailPage />} />
             <Route path="/orders" element={<OrdersListPage />} />
             <Route path="/orders/:number" element={<OrderDetailPage />} />
+            <Route path="/fulfilment/sub-orders" element={<SubOrdersListPage />} />
+            <Route path="/fulfilment/sub-orders/:id" element={<SubOrderDetailPage />} />
+            <Route path="/fulfilment/challans" element={<ChallansPage />} />
+            <Route path="/fulfilment/challans/:id" element={<ChallanDetailPage />} />
+            <Route path="/fulfilment/invoices" element={<InvoicesPage />} />
+            <Route path="/fulfilment/invoices/:id" element={<InvoiceDetailPage />} />
             <Route path="/catalog" element={<CatalogListPage />} />
             <Route path="/catalog/:entity/:id" element={<CatalogDetailPage />} />
             <Route path="/homepage" element={<HomeLayoutPage />} />

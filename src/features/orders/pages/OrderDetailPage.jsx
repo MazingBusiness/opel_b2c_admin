@@ -8,6 +8,7 @@ import {
   updateOrderFulfilment,
   updatePaymentNotes,
 } from '../api/api'
+import { ApprovalPanel } from '../components/ApprovalPanel'
 import { FulfilmentBadge, PaymentMethodBadge, PaymentStatusBadge } from '../components/OrderBadges'
 import {
   formatDateTime,
@@ -124,7 +125,7 @@ export function OrderDetailPage() {
     fulfilmentMutation.error || codMutation.error || notesMutation.error || null
 
   return (
-    <div className="max-w-4xl space-y-6">
+    <div className="max-w-5xl space-y-6">
       <Link
         to="/orders"
         className="inline-flex items-center gap-1 text-sm font-medium text-ink-muted hover:text-brand"
@@ -277,6 +278,8 @@ export function OrderDetailPage() {
               </Field>
             </dl>
           </Section>
+
+          <ApprovalPanel number={order.number} />
 
           <Section title="Timeline" description="Packed is a step under processing — not a separate order status.">
             <ol className="space-y-3">

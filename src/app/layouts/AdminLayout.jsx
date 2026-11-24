@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { HiOutlineClipboardList, HiOutlineCollection, HiOutlineGlobeAlt, HiOutlineTemplate, HiOutlineHome, HiOutlineLogout, HiOutlineUserCircle, HiOutlineUsers } from 'react-icons/hi'
+import { HiOutlineClipboardList, HiOutlineCube, HiOutlineDocumentDuplicate, HiOutlineReceiptTax, HiOutlineCollection, HiOutlineGlobeAlt, HiOutlineTemplate, HiOutlineHome, HiOutlineLogout, HiOutlineUserCircle, HiOutlineUsers } from 'react-icons/hi'
 import { useAuthStore } from '../../features/auth/store/useAuthStore'
 import { logoutRequest } from '../../features/auth/api/api'
 import opelLogo from '../../assets/images/opelLogo.jpg'
@@ -81,6 +81,20 @@ export function AdminLayout() {
               <HiOutlineClipboardList className="h-4 w-4" aria-hidden />
               Orders
             </NavLink>
+            <p className="mt-3 px-3 text-[11px] font-semibold uppercase tracking-wide text-ink-muted">Fulfilment</p>
+            <NavLink to="/fulfilment/sub-orders" className={navLinkClass}>
+              <HiOutlineCube className="h-4 w-4" aria-hidden />
+              Sub-orders
+            </NavLink>
+            <NavLink to="/fulfilment/challans" className={navLinkClass}>
+              <HiOutlineDocumentDuplicate className="h-4 w-4" aria-hidden />
+              Challans
+            </NavLink>
+            <NavLink to="/fulfilment/invoices" className={navLinkClass}>
+              <HiOutlineReceiptTax className="h-4 w-4" aria-hidden />
+              Invoices
+            </NavLink>
+            <div className="mt-3 border-t border-border" />
             <NavLink to="/catalog" className={navLinkClass}>
               <HiOutlineCollection className="h-4 w-4" aria-hidden />
               Catalog

@@ -107,3 +107,57 @@ export async function updatePaymentNotes(number, paymentNotes) {
   })
   return data
 }
+
+/**
+ * @typedef {{ live: number | null, b2c_pending: number, left: number | null }} BranchStock
+ * @typedef {{
+ *   order_item_id: number, title: string, part_no: string | null, unit_price: string,
+ *   ordered: number, allocated: number, cancelled: number, unallocated: number,
+ *   allocatable: boolean, stock_available: boolean,
+ *   stock_status: 'ok' | 'not_found' | 'unavailable' | null,
+ *   stock: Record<string, BranchStock> | null,
+ * }} AllocationLine
+ * @typedef {{
+ *   number: string, branch: string, created_at: string | null,
+ *   items: Array<{ title: string | null, part_no: string, qty: number, qty_challaned: number, qty_cancelled: number }>,
+ * }} SubOrderSummary
+ * @typedef {{
+ *   order_number: string, approval_status: string | null, allocation_version: number,
+ *   blocked_reason: string | null, branches: Array<{ code: string, name: string, short: string }>,
+ *   lines: AllocationLine[], sub_orders: SubOrderSummary[],
+ * }} Allocation
+ */
+
+/** @param {string} number @returns {Promise<{ ok: boolean, allocation: Allocation }>} */
+export async function fetchAllocation(number) {
+  const { data } = await apiClient.get(ADMIN_ORDERS_ENDPOINTS.allocation(number))
+  return data
+}
+
+/**
+ * @param {string} number
+ * @param {number} expectedVersion
+ * @param {Array<{ order_item_id: number, branches: Record<string, number> }>} lines
+ * @returns {Promise<{ ok: boolean, allocation: Allocation }>}
+ */
+export async function allocateOrder(number, expectedVersion, lines) {
+  const { data } = await apiClient.post(ADMIN_ORDERS_ENDPOINTS.allocate(number), {
+    expected_version: expectedVersion,
+    lines,
+  })
+  return data
+}
+
+/**
+ * @param {string} number
+ * @param {number} expectedVersion
+ * @param {Array<{ order_item_id: number, qty: number }>} lines
+ * @returns {Promise<{ ok: boolean, allocation: Allocation }>}
+ */
+export async function cancelUnallocated(number, expectedVersion, lines) {
+  const { data } = await apiClient.post(ADMIN_ORDERS_ENDPOINTS.cancelUnallocated(number), {
+    expected_version: expectedVersion,
+    lines,
+  })
+  return data
+}
