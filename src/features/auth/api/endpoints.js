@@ -6,6 +6,4 @@ export const ADMIN_AUTH_ENDPOINTS = {
   logout: '/api/v1/admin/auth/logout',
   profile: '/api/v1/admin/auth/profile',
   password: '/api/v1/admin/auth/password',
-  forgotPassword: '/api/v1/admin/auth/forgot-password',
-  resetPassword: '/api/v1/admin/auth/reset-password',
 }

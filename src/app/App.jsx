@@ -1,10 +1,9 @@
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom'
 import { AdminLayout } from './layouts/AdminLayout'
 import { LoginPage } from '../features/auth/pages/LoginPage'
-import { ForgotPasswordPage } from '../features/auth/pages/ForgotPasswordPage'
-import { ResetPasswordPage } from '../features/auth/pages/ResetPasswordPage'
+import { ChangeTemporaryPasswordPage } from '../features/auth/pages/ChangeTemporaryPasswordPage'
 import { AuthSessionBootstrap } from '../features/auth/components/AuthSessionBootstrap'
-import { useAuthStore } from '../features/auth/store/useAuthStore'
+import { canUseModule, useAuthStore } from '../features/auth/store/useAuthStore'
 import { DashboardPage } from '../features/dashboard/pages/DashboardPage'
 import { ProfilePage } from '../features/profile/pages/ProfilePage'
 import { UsersListPage } from '../features/users/pages/UsersListPage'
@@ -23,9 +22,12 @@ import { ChallanDetailPage } from '../features/fulfilment/pages/ChallanDetailPag
 import { InvoicesPage } from '../features/fulfilment/pages/InvoicesPage'
 import { InvoiceDetailPage } from '../features/fulfilment/pages/InvoiceDetailPage'
 import { HomeLayoutPage } from '../features/home/pages/HomeLayoutPage'
+import { AdminsListPage } from '../features/admins/pages/AdminsListPage'
+import { AdminFormPage } from '../features/admins/pages/AdminFormPage'
 
 function ProtectedRoute() {
   const token = useAuthStore((s) => s.token)
+  const user = useAuthStore((s) => s.user)
   const bootstrapped = useAuthStore((s) => s.bootstrapped)
   const hasHydrated = useAuthStore((s) => s.hasHydrated)
 
@@ -41,7 +43,18 @@ function ProtectedRoute() {
     return <Navigate to="/login" replace />
   }
 
+  if (user?.must_change_password) {
+    return <ChangeTemporaryPasswordPage />
+  }
+
   return <Outlet />
+}
+
+/** Hides sections the admin can't use. The API enforces the same rule. */
+function RequireAccess({ module, superOnly = false }) {
+  const user = useAuthStore((s) => s.user)
+  const allowed = superOnly ? Boolean(user?.is_super) : canUseModule(user, module)
+  return allowed ? <Outlet /> : <Navigate to="/" replace />
 }
 
 function PublicOnlyRoute() {
@@ -72,30 +85,43 @@ export function App() {
       <Routes>
         <Route element={<PublicOnlyRoute />}>
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         </Route>
-
-        {/* Reachable even with a session: emailed links may be opened in a signed-in browser. */}
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
 
         <Route element={<ProtectedRoute />}>
           <Route element={<AdminLayout />}>
             <Route path="/" element={<DashboardPage />} />
-            <Route path="/users" element={<UsersListPage />} />
-            <Route path="/users/:id" element={<UserDetailPage />} />
-            <Route path="/orders" element={<OrdersListPage />} />
-            <Route path="/orders/:number" element={<OrderDetailPage />} />
-            <Route path="/fulfilment/sub-orders" element={<SubOrdersListPage />} />
-            <Route path="/fulfilment/sub-orders/:id" element={<SubOrderDetailPage />} />
-            <Route path="/fulfilment/challans" element={<ChallansPage />} />
-            <Route path="/fulfilment/challans/:id" element={<ChallanDetailPage />} />
-            <Route path="/fulfilment/invoices" element={<InvoicesPage />} />
-            <Route path="/fulfilment/invoices/:id" element={<InvoiceDetailPage />} />
-            <Route path="/catalog" element={<CatalogListPage />} />
-            <Route path="/catalog/:entity/:id" element={<CatalogDetailPage />} />
-            <Route path="/homepage" element={<HomeLayoutPage />} />
-            <Route path="/seo" element={<SeoListPage />} />
-            <Route path="/seo/:type/:key" element={<SeoEditPage />} />
+            <Route element={<RequireAccess module="users" />}>
+              <Route path="/users" element={<UsersListPage />} />
+              <Route path="/users/:id" element={<UserDetailPage />} />
+            </Route>
+            <Route element={<RequireAccess module="orders" />}>
+              <Route path="/orders" element={<OrdersListPage />} />
+              <Route path="/orders/:number" element={<OrderDetailPage />} />
+            </Route>
+            <Route element={<RequireAccess module="fulfilment" />}>
+              <Route path="/fulfilment/sub-orders" element={<SubOrdersListPage />} />
+              <Route path="/fulfilment/sub-orders/:id" element={<SubOrderDetailPage />} />
+              <Route path="/fulfilment/challans" element={<ChallansPage />} />
+              <Route path="/fulfilment/challans/:id" element={<ChallanDetailPage />} />
+              <Route path="/fulfilment/invoices" element={<InvoicesPage />} />
+              <Route path="/fulfilment/invoices/:id" element={<InvoiceDetailPage />} />
+            </Route>
+            <Route element={<RequireAccess module="catalog" />}>
+              <Route path="/catalog" element={<CatalogListPage />} />
+              <Route path="/catalog/:entity/:id" element={<CatalogDetailPage />} />
+            </Route>
+            <Route element={<RequireAccess module="homepage" />}>
+              <Route path="/homepage" element={<HomeLayoutPage />} />
+            </Route>
+            <Route element={<RequireAccess module="seo" />}>
+              <Route path="/seo" element={<SeoListPage />} />
+              <Route path="/seo/:type/:key" element={<SeoEditPage />} />
+            </Route>
+            <Route element={<RequireAccess superOnly />}>
+              <Route path="/admins" element={<AdminsListPage />} />
+              <Route path="/admins/new" element={<AdminFormPage />} />
+              <Route path="/admins/:id" element={<AdminFormPage />} />
+            </Route>
             <Route path="/profile" element={<ProfilePage />} />
           </Route>
         </Route>

@@ -33,7 +33,7 @@ export async function updateProfileRequest(payload) {
 }
 
 /**
- * Change password for the signed-in admin. Current token stays valid.
+ * Change password for the signed-in admin. Current token stays valid; returns the updated user.
  * @param {{ current_password: string, password: string, password_confirmation: string }} payload
  */
 export async function updatePasswordRequest(payload) {
@@ -41,20 +41,3 @@ export async function updatePasswordRequest(payload) {
   return data
 }
 
-/**
- * Always resolves with a generic message for any well-formed email (no account enumeration).
- * @param {{ email: string }} payload
- * @returns {Promise<{ ok: boolean, message?: string }>}
- */
-export async function forgotPasswordRequest(payload) {
-  const { data } = await apiClient.post(ADMIN_AUTH_ENDPOINTS.forgotPassword, payload)
-  return data
-}
-
-/**
- * @param {{ email: string, token: string, password: string, password_confirmation: string }} payload
- */
-export async function resetPasswordRequest(payload) {
-  const { data } = await apiClient.post(ADMIN_AUTH_ENDPOINTS.resetPassword, payload)
-  return data
-}

@@ -1,7 +1,7 @@
 import opelLogo from '../../../assets/images/opelLogo.jpg'
 
 /**
- * Centered card shell shared by public auth pages (login, forgot, reset).
+ * Centered card shell shared by auth screens (login, first-login password change).
  * @param {{ title?: string, subtitle?: string, children: import('react').ReactNode }} props
  */
 export function AuthCard({ title = 'B2C Admin', subtitle, children }) {

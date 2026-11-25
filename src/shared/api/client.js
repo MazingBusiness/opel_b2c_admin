@@ -5,11 +5,7 @@ import { useAuthStore } from '../../features/auth/store/useAuthStore'
  * Public auth routes: never send a stale Bearer token, and a 401 from them
  * must not clear the local session.
  */
-const PUBLIC_AUTH_PATH_FRAGMENTS = [
-  '/api/v1/admin/auth/login',
-  '/api/v1/admin/auth/forgot-password',
-  '/api/v1/admin/auth/reset-password',
-]
+const PUBLIC_AUTH_PATH_FRAGMENTS = ['/api/v1/admin/auth/login']
 
 /**
  * @param {string | undefined} url
@@ -44,6 +40,10 @@ apiClient.interceptors.response.use(
     const url = error.config?.url
     if (status === 401 && !isPublicAuthRequest(url)) {
       useAuthStore.getState().clearSession()
+    }
+    // Server says the temporary password must be changed first: show that screen.
+    if (status === 403 && error.response?.data?.code === 'password_change_required') {
+      useAuthStore.getState().requirePasswordChange()
     }
     return Promise.reject(error)
   },

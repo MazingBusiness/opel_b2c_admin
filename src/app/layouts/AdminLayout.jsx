@@ -1,6 +1,6 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { HiOutlineClipboardList, HiOutlineCube, HiOutlineDocumentDuplicate, HiOutlineReceiptTax, HiOutlineCollection, HiOutlineGlobeAlt, HiOutlineTemplate, HiOutlineHome, HiOutlineLogout, HiOutlineUserCircle, HiOutlineUsers } from 'react-icons/hi'
-import { useAuthStore } from '../../features/auth/store/useAuthStore'
+import { HiOutlineClipboardList, HiOutlineCube, HiOutlineDocumentDuplicate, HiOutlineReceiptTax, HiOutlineCollection, HiOutlineGlobeAlt, HiOutlineTemplate, HiOutlineHome, HiOutlineLogout, HiOutlineShieldCheck, HiOutlineUserCircle, HiOutlineUsers } from 'react-icons/hi'
+import { canUseModule, useAuthStore } from '../../features/auth/store/useAuthStore'
 import { logoutRequest } from '../../features/auth/api/api'
 import opelLogo from '../../assets/images/opelLogo.jpg'
 
@@ -16,6 +16,7 @@ export function AdminLayout() {
   const clearSession = useAuthStore((s) => s.clearSession)
   const user = useAuthStore((s) => s.user)
   const navigate = useNavigate()
+  const can = (module) => canUseModule(user, module)
 
   async function handleLogout() {
     await logoutRequest()
@@ -35,7 +36,7 @@ export function AdminLayout() {
             />
             <div className="min-w-0">
               <p className="text-sm font-semibold text-ink">B2C Admin</p>
-              <p className="truncate text-xs text-ink-muted">Staff console</p>
+              <p className="truncate text-xs text-ink-muted">{user?.is_super ? 'Super admin' : 'Admin console'}</p>
             </div>
           </div>
 
@@ -73,40 +74,60 @@ export function AdminLayout() {
               <HiOutlineHome className="h-4 w-4" aria-hidden />
               Dashboard
             </NavLink>
-            <NavLink to="/users" className={navLinkClass}>
-              <HiOutlineUsers className="h-4 w-4" aria-hidden />
-              Users
-            </NavLink>
-            <NavLink to="/orders" className={navLinkClass}>
-              <HiOutlineClipboardList className="h-4 w-4" aria-hidden />
-              Orders
-            </NavLink>
-            <p className="mt-3 px-3 text-[11px] font-semibold uppercase tracking-wide text-ink-muted">Fulfilment</p>
-            <NavLink to="/fulfilment/sub-orders" className={navLinkClass}>
-              <HiOutlineCube className="h-4 w-4" aria-hidden />
-              Sub-orders
-            </NavLink>
-            <NavLink to="/fulfilment/challans" className={navLinkClass}>
-              <HiOutlineDocumentDuplicate className="h-4 w-4" aria-hidden />
-              Challans
-            </NavLink>
-            <NavLink to="/fulfilment/invoices" className={navLinkClass}>
-              <HiOutlineReceiptTax className="h-4 w-4" aria-hidden />
-              Invoices
-            </NavLink>
+            {can('users') ? (
+              <NavLink to="/users" className={navLinkClass}>
+                <HiOutlineUsers className="h-4 w-4" aria-hidden />
+                Users
+              </NavLink>
+            ) : null}
+            {can('orders') ? (
+              <NavLink to="/orders" className={navLinkClass}>
+                <HiOutlineClipboardList className="h-4 w-4" aria-hidden />
+                Orders
+              </NavLink>
+            ) : null}
+            {can('fulfilment') ? (
+              <>
+                <p className="mt-3 px-3 text-[11px] font-semibold uppercase tracking-wide text-ink-muted">Fulfilment</p>
+                <NavLink to="/fulfilment/sub-orders" className={navLinkClass}>
+                  <HiOutlineCube className="h-4 w-4" aria-hidden />
+                  Sub-orders
+                </NavLink>
+                <NavLink to="/fulfilment/challans" className={navLinkClass}>
+                  <HiOutlineDocumentDuplicate className="h-4 w-4" aria-hidden />
+                  Challans
+                </NavLink>
+                <NavLink to="/fulfilment/invoices" className={navLinkClass}>
+                  <HiOutlineReceiptTax className="h-4 w-4" aria-hidden />
+                  Invoices
+                </NavLink>
+              </>
+            ) : null}
             <div className="mt-3 border-t border-border" />
-            <NavLink to="/catalog" className={navLinkClass}>
-              <HiOutlineCollection className="h-4 w-4" aria-hidden />
-              Catalog
-            </NavLink>
-            <NavLink to="/homepage" className={navLinkClass}>
-              <HiOutlineTemplate className="h-4 w-4" aria-hidden />
-              Homepage
-            </NavLink>
-            <NavLink to="/seo" className={navLinkClass}>
-              <HiOutlineGlobeAlt className="h-4 w-4" aria-hidden />
-              SEO
-            </NavLink>
+            {can('catalog') ? (
+              <NavLink to="/catalog" className={navLinkClass}>
+                <HiOutlineCollection className="h-4 w-4" aria-hidden />
+                Catalog
+              </NavLink>
+            ) : null}
+            {can('homepage') ? (
+              <NavLink to="/homepage" className={navLinkClass}>
+                <HiOutlineTemplate className="h-4 w-4" aria-hidden />
+                Homepage
+              </NavLink>
+            ) : null}
+            {can('seo') ? (
+              <NavLink to="/seo" className={navLinkClass}>
+                <HiOutlineGlobeAlt className="h-4 w-4" aria-hidden />
+                SEO
+              </NavLink>
+            ) : null}
+            {user?.is_super ? (
+              <NavLink to="/admins" className={navLinkClass}>
+                <HiOutlineShieldCheck className="h-4 w-4" aria-hidden />
+                Admins
+              </NavLink>
+            ) : null}
             <NavLink to="/profile" className={navLinkClass}>
               <HiOutlineUserCircle className="h-4 w-4" aria-hidden />
               Profile

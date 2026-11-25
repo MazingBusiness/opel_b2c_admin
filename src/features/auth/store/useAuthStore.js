@@ -1,12 +1,19 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
+/** Admin sections a sub-admin can be given. Mirrors backend AdminModules::ALL. */
+export const ADMIN_MODULES = /** @type {const} */ (['orders', 'fulfilment', 'users', 'catalog', 'homepage', 'seo'])
+
 /**
+ * @typedef {typeof ADMIN_MODULES[number]} AdminModule
  * @typedef {{
  *   id: string,
- *   name?: string,
- *   email?: string,
- *   is_staff?: boolean,
+ *   name: string,
+ *   email: string,
+ *   is_super: boolean,
+ *   modules: string[],
+ *   branches: string[],
+ *   must_change_password: boolean,
  * }} AdminUser
  */
 
@@ -20,8 +27,20 @@ export function toAdminUser(apiUser) {
     id: String(apiUser.id),
     name: apiUser.name ? String(apiUser.name) : '',
     email: apiUser.email ? String(apiUser.email) : '',
-    is_staff: Boolean(apiUser.is_staff),
+    is_super: Boolean(apiUser.is_super),
+    modules: Array.isArray(apiUser.modules) ? apiUser.modules.map(String) : [],
+    branches: Array.isArray(apiUser.branches) ? apiUser.branches.map(String) : [],
+    must_change_password: Boolean(apiUser.must_change_password),
   }
+}
+
+/**
+ * UI-only hint; the server enforces access on every route.
+ * @param {AdminUser | null} user
+ * @param {AdminModule} module
+ */
+export function canUseModule(user, module) {
+  return Boolean(user && (user.is_super || user.modules.includes(module)))
 }
 
 export const useAuthStore = create(
@@ -58,6 +77,10 @@ export const useAuthStore = create(
        * @param {AdminUser | null} user
        */
       setUser: (user) => set({ user }),
+
+      /** The API refused a call until the temporary password is changed. */
+      requirePasswordChange: () =>
+        set((state) => (state.user ? { user: { ...state.user, must_change_password: true } } : {})),
 
       markBootstrapped: () => set({ bootstrapped: true }),
     }),

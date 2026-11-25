@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useAuthStore } from '../../auth/store/useAuthStore'
 
 export const BRANCHES = [
   { code: 'KOLKATA', label: 'Kolkata' },
@@ -105,11 +106,13 @@ const input = 'rounded-md border border-border bg-surface px-3 py-2 text-sm text
 
 /** Branch select + search box shared by the three lists. */
 export function ListFilters({ branch, onBranch, q, onQ, children }) {
+  const user = useAuthStore((s) => s.user)
+  const branches = user?.is_super ? BRANCHES : BRANCHES.filter((b) => user?.branches.includes(b.code))
   return (
     <div className="flex flex-wrap items-center gap-2">
       <select aria-label="Branch" value={branch} onChange={(e) => onBranch(e.target.value)} className={input}>
-        <option value="">All branches</option>
-        {BRANCHES.map((b) => (
+        <option value="">{branches.length === BRANCHES.length ? 'All branches' : 'All my branches'}</option>
+        {branches.map((b) => (
           <option key={b.code} value={b.code}>
             {b.label}
           </option>

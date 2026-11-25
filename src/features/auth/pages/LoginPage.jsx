@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore, toAdminUser } from '../store/useAuthStore'
 import { loginRequest } from '../api/api'
 import { getErrorMessage } from '../../../shared/api/client'
@@ -41,7 +41,7 @@ export function LoginPage() {
   }
 
   return (
-    <AuthCard subtitle="Sign in with your staff email and password.">
+    <AuthCard subtitle="Sign in with your admin email and password.">
       {flashMessage ? (
         <Alert tone="success" className="mt-6">
           {flashMessage}
@@ -59,25 +59,16 @@ export function LoginPage() {
           onChange={(e) => setEmail(e.target.value)}
         />
 
-        <div>
-          <TextField
-            id="password"
-            label="Password"
-            type="password"
-            autoComplete="current-password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <div className="mt-1.5 text-right">
-            <Link
-              to="/forgot-password"
-              className="text-xs font-medium text-brand hover:text-brand-dark hover:underline"
-            >
-              Forgot password?
-            </Link>
-          </div>
-        </div>
+        <TextField
+          id="password"
+          label="Password"
+          type="password"
+          autoComplete="current-password"
+          required
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          hint="Forgot it? Ask the super admin to reset it."
+        />
 
         {error ? (
           <p className="text-sm text-red-600" role="alert">
